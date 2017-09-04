@@ -8,7 +8,7 @@ public class GuessingGame {
     public GuessingGame(int min, int max) {
         this.min = min;
         this.max = max;
-        secret = min + random.nextInt(max);
+        secret = min + random.nextInt(max-min+1);
     }
 
     public GuessingGame() {
