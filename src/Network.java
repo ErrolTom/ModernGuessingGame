@@ -7,18 +7,15 @@ import java.net.MulticastSocket;
 public class Network {
     private DatagramSocket direct;
     private MulticastSocket multicast;
-    private int hostPort;
     private int multicastPort;
     private InetAddress multicastIP;
 
-    public Network(int hostPort, String multicastIP,
+    public Network(String multicastIP,
                    int multicastPort) throws IOException {
-        this.hostPort = hostPort;
         this.multicastPort = multicastPort;
         this.multicastIP = InetAddress.getByName(multicastIP);
 
-        // with respect to the host machine's IP
-        direct = new DatagramSocket(hostPort);
+        direct = new DatagramSocket();
 
         multicast = new MulticastSocket(multicastPort);
         multicast.joinGroup(this.multicastIP);
@@ -30,9 +27,9 @@ public class Network {
         direct.close();
     }
 
-    public void send(String targetIP, String message) throws IOException {
+    public void send(String targetIP, int targetPort, String message) throws IOException {
         InetAddress address = InetAddress.getByName(targetIP);
-        DatagramPacket packet = new DatagramPacket(message.getBytes(), message.length(), address, hostPort);
+        DatagramPacket packet = new DatagramPacket(message.getBytes(), message.length(), address, targetPort);
         direct.send(packet);
     }
 
@@ -44,8 +41,12 @@ public class Network {
         return new String(buffer).trim();
     }
 
-    public String getHostIP() throws IOException {
+    public String getIP() throws IOException {
         return InetAddress.getLocalHost().getHostAddress();
+    }
+
+    public int getPort() throws IOException {
+        return direct.getLocalPort();
     }
 
     public void broadcast(String message) throws IOException {
