@@ -1,5 +1,6 @@
 import org.junit.Assert;
 import org.junit.Test;
+import utility.Network;
 
 import java.io.IOException;
 
@@ -8,7 +9,7 @@ public class TestNetwork {
     public void testSendRead() {
         try {
             Network network = new Network("228.5.6.7", 49153);
-            System.out.println("host IP: " + network.getIP());
+            System.out.println("host IP: " + network.getIP() + " on port: " + network.getPort());
             network.send(network.getIP(), network.getPort(), "testing 1 2 3");
             String message = network.read();
             network.close();
@@ -52,10 +53,12 @@ public class TestNetwork {
 
             String message = server.read();
 
+            Assert.assertEquals("testing 1 2 3", message);
+            Assert.assertEquals(client.getIP(), server.getLatestReadIP());
+            Assert.assertEquals(client.getPort(), server.getLatestReadPort());
+
             server.close();
             client.close();
-
-            Assert.assertEquals("testing 1 2 3", message);
 
         } catch (IOException exception) {
             Assert.fail(exception.getMessage());

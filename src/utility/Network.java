@@ -1,3 +1,5 @@
+package utility;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -9,6 +11,9 @@ public class Network {
     private MulticastSocket multicast;
     private int multicastPort;
     private InetAddress multicastIP;
+
+    private String latestReadIP;
+    private int latestReadPort;
 
     public Network(String multicastIP,
                    int multicastPort) throws IOException {
@@ -38,6 +43,9 @@ public class Network {
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         direct.receive(packet);
 
+        latestReadIP = packet.getAddress().getHostAddress();
+        latestReadPort = packet.getPort();
+
         return new String(buffer).trim();
     }
 
@@ -47,6 +55,14 @@ public class Network {
 
     public int getPort() throws IOException {
         return direct.getLocalPort();
+    }
+
+    public String getLatestReadIP() {
+        return latestReadIP;
+    }
+
+    public int getLatestReadPort() {
+        return latestReadPort;
     }
 
     public void broadcast(String message) throws IOException {
